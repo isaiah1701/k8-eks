@@ -1,0 +1,56 @@
+resource "helm_release" "nginx_ingress" {
+  name       = "nginx-ingress-controller"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  chart      = "ingress-nginx"
+
+  namespace        = "ingress-nginx"
+  create_namespace = true
+}
+
+resource "helm_release" "cert_manager" {
+  name       = "cert-manager"
+  repository = "https://charts.jetstack.io"
+  chart      = "cert-manager"
+  version    = "v1.14.4" # ✅ Pin to a stable version
+
+  namespace        = "cert-manager"
+  create_namespace = true
+
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
+
+  values = [
+    file("helm-values/cert-manager.yaml")
+  ]
+}
+
+resource "helm_release" "external_dns" {
+  name       = "external-dns"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "external-dns"
+  version    = "6.28.3"
+
+  namespace        = "external-dns"
+  create_namespace = true
+
+  values = [
+    file("helm-values/external-dns.yaml")
+  ]
+}
+
+resource "helm_release" "argocd_deploy" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  version    = "5.43.0"
+  timeout    = 600
+
+  namespace        = "argo-cd"
+  create_namespace = true
+
+  values = [
+   "${file("helm-values/argocd.yaml")}"
+  ]
+}

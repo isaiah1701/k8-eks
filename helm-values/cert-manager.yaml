@@ -1,0 +1,13 @@
+ingressShim: 
+  defaultACMEChallengeType: dns01
+  defaultACMEDNS01ChallengeProvider: Route53
+
+
+  extraArgs:
+  - --dns01-recursive-nameservers="8.8.8.8:53"
+  - --dns01-recursive-nameservers-only
+
+
+  serviceAccount: 
+   annotations:
+     eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/cert-manager

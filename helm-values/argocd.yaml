@@ -1,0 +1,20 @@
+extraArgs:
+  - --insecure
+  - --basehref
+  - --staticassets
+ 
+server:
+  extraArgs:
+    - --insecure
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.org/hsts: "false"
+    hosts:
+      - argocd.isaiahmichael.com
+    # ❌ Remove TLS block entirely
