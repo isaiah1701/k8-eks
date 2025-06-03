@@ -5,12 +5,16 @@ metadata:
   namespace: argo-cd
 spec:
   project: default
-
   source:
-    repoURL: 'https://github.com/isaiah1701/k8-eks.git'
+    repoURL: https://github.com/isaiah1701/k8-eks.git
     targetRevision: HEAD
-    path: app-hub
-
+    path: apps
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: https://kubernetes.default.svc
     namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
