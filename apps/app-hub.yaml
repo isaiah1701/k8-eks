@@ -1,22 +1,22 @@
-# ────────────────────────────────────────────────────────────────────────────────
-# 1) Argo CD Application – “app-hub”
-# ────────────────────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────────
+# 1) ArgoCD Application: app-hub
+#    Deploys manifests from GitHub to the 'apps' namespace
+# ────────────────────────────────────────────────────────────────────────
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: app-hub
-  namespace: argo-cd
+  namespace: argocd  # Namespace where ArgoCD is installed
 spec:
   project: default
-
   source:
-    repoURL: https://github.com/isaiah1701/k8-eks.git   # ← point to your repo
+    repoURL: https://github.com/isaiah1701/k8-eks.git
     targetRevision: HEAD
-    path: app-hub                                       # manifests live here
+    path: app-hub  # Must match the folder in the repo with your manifests
 
   destination:
-    server: https://kubernetes.default.svc              # in-cluster
-    namespace: apps                                     # will be created
+    server: https://kubernetes.default.svc
+    namespace: apps  # Will auto-create via syncOptions
 
   syncPolicy:
     automated:
@@ -24,32 +24,34 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
 ---
-# ────────────────────────────────────────────────────────────────────────────────
-# 2) Ingress to expose “the-app-hub” Service over HTTP
-#    + requests TLS from cert-manager ClusterIssuer named “issuer”
-# ────────────────────────────────────────────────────────────────────────────────
+
+# ────────────────────────────────────────────────────────────────────────
+# 2) Ingress Resource for the App Hub Service
+#    Exposes HTTP endpoint with TLS via cert-manager (ClusterIssuer: issuer)
+# ────────────────────────────────────────────────────────────────────────
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: the-app-hub-ingress
-  namespace: apps          # must match the Service’s namespace
+  namespace: apps
   annotations:
-    cert-manager.io/cluster-issuer: "issuer"
+    cert-manager.io/cluster-issuer: issuer
 spec:
   ingressClassName: nginx
   rules:
-    - host: app.argocd.isaiahmichael.com  # ← change to your domain
+    - host: app.argocd.isaiahmichael.com  # Change to your actual domain
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: the-app-hub       # Service that fronts your app
+                name: the-app-hub  # Must match your Service name
                 port:
                   number: 80
   tls:
     - hosts:
-        - app.argocd.isaiahmichael.com  # must match the host above
-      secretName: the-app-hub-tls       # cert-manager will create this
+        - app.argocd.isaiahmichael.com
+      secretName: the-app-hub-tls  # TLS secret created by cert-manager
