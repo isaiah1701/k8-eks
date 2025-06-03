@@ -1,0 +1,55 @@
+# ────────────────────────────────────────────────────────────────────────────────
+# 1) Argo CD Application – “app-hub”
+# ────────────────────────────────────────────────────────────────────────────────
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-hub
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/isaiah1701/k8-eks.git   # ← point to your repo
+    targetRevision: HEAD
+    path: app-hub                                       # manifests live here
+
+  destination:
+    server: https://kubernetes.default.svc              # in-cluster
+    namespace: apps                                     # will be created
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# ────────────────────────────────────────────────────────────────────────────────
+# 2) Ingress to expose “the-app-hub” Service over HTTP
+#    + requests TLS from cert-manager ClusterIssuer named “issuer”
+# ────────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: the-app-hub-ingress
+  namespace: apps          # must match the Service’s namespace
+  annotations:
+    cert-manager.io/cluster-issuer: "issuer"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: the-app-hub.lab.moabukar.co.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: the-app-hub       # Service that fronts your app
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - the-app-hub.lab.moabukar.co.uk
+      secretName: the-app-hub-tls       # cert-manager will create this

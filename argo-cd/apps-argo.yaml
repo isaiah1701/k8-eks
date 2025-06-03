@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: 'https://github.com/isaiah1701/.git'
+    repoURL: 'https://github.com/isaiah1701/k8-eks.git'
     targetRevision: HEAD
     path: app-hub
 
