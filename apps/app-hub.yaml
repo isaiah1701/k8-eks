@@ -1,56 +1,11 @@
-# ───────────────────────────────────────────────────────────────
-# 1) ArgoCD Application: app-hub
-#    Deploys resources from GitHub repo into 'apps' namespace
-# ───────────────────────────────────────────────────────────────
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: v1
+kind: Service
 metadata:
-  name: app-hub
-  namespace: argo-cd  # Namespace where ArgoCD is installed
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/isaiah1701/k8-eks.git
-    targetRevision: HEAD
-    path: apps  # Folder inside the repo containing K8s manifests
-
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: apps  # Target namespace for the resources
-
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
----
-
-# ───────────────────────────────────────────────────────────────
-# 2) Ingress to expose the-app-hub Service with TLS via cert-manager
-# ───────────────────────────────────────────────────────────────
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: the-app-hub-ingress
+  name: the-app-hub
   namespace: apps
-  annotations:
-    cert-manager.io/cluster-issuer: "issuer"
 spec:
-  ingressClassName: nginx
-  rules:
-    - host: app.argocd.isaiahmichael.com  # Replace with your real domain
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: the-app-hub  # Must match the actual Service name
-                port:
-                  number: 80
-  tls:
-    - hosts:
-        - app.argocd.isaiahmichael.com
-      secretName: the-app-hub-tls  # Created by cert-manager
+  selector:
+    app: the-app-hub
+  ports:
+    - port: 80
+      targetPort: 5000
