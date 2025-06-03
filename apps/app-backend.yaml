@@ -14,10 +14,10 @@ spec:
         app: app-hub
     spec:
       containers:
-        - name: flask-mysql
-          image: isaiah4748/flask-mysql
+        - name: istio-app
+          image: istio/app
           ports:
-            - containerPort: 5000  # Flask default port
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -29,4 +29,4 @@ spec:
     app: app-hub
   ports:
     - port: 80
-      targetPort: 5000  # Forward external 80 to container 5000
+      targetPort: 8080
