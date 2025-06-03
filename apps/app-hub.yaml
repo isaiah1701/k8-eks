@@ -5,7 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: app-hub
-  namespace: argocd
+  namespace: argo-cd
 spec:
   project: default
 
@@ -39,7 +39,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: the-app-hub.lab.moabukar.co.uk
+    - host: app.argocd.isaiahmichael.com  # ← change to your domain
       http:
         paths:
           - path: /
@@ -51,5 +51,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - the-app-hub.lab.moabukar.co.uk
+        - app.argocd.isaiahmichael.com  # must match the host above
       secretName: the-app-hub-tls       # cert-manager will create this
