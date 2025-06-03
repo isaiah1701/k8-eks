@@ -7,17 +7,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: the-app-hub
+      app: app-hub
   template:
     metadata:
       labels:
-        app: the-app-hub
+        app: app-hub
     spec:
       containers:
-        - name: weather
-          image: tsears/weather:latest
+        - name: flask-mysql
+          image: isaiah4748/flask-mysql
           ports:
-            - containerPort: 5000
+            - containerPort: 5000  # Flask default port
 ---
 apiVersion: v1
 kind: Service
@@ -26,7 +26,7 @@ metadata:
   namespace: apps
 spec:
   selector:
-    app: the-app-hub
+    app: app-hub
   ports:
     - port: 80
-      targetPort: 5000
+      targetPort: 5000  # Forward external 80 to container 5000
