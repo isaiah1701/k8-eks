@@ -1,22 +1,22 @@
-# ────────────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────────
 # 1) ArgoCD Application: app-hub
-#    Deploys manifests from GitHub to the 'apps' namespace
-# ────────────────────────────────────────────────────────────────────────
+#    Deploys resources from GitHub repo into 'apps' namespace
+# ───────────────────────────────────────────────────────────────
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: app-hub
-  namespace: argocd  # Namespace where ArgoCD is installed
+  namespace: argo-cd  # Namespace where ArgoCD is installed
 spec:
   project: default
   source:
     repoURL: https://github.com/isaiah1701/k8-eks.git
     targetRevision: HEAD
-    path: app-hub  # Must match the folder in the repo with your manifests
+    path: apps  # Folder inside the repo containing K8s manifests
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: apps  # Will auto-create via syncOptions
+    namespace: apps  # Target namespace for the resources
 
   syncPolicy:
     automated:
@@ -27,31 +27,30 @@ spec:
 
 ---
 
-# ────────────────────────────────────────────────────────────────────────
-# 2) Ingress Resource for the App Hub Service
-#    Exposes HTTP endpoint with TLS via cert-manager (ClusterIssuer: issuer)
-# ────────────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────────────────────
+# 2) Ingress to expose the-app-hub Service with TLS via cert-manager
+# ───────────────────────────────────────────────────────────────
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: the-app-hub-ingress
   namespace: apps
   annotations:
-    cert-manager.io/cluster-issuer: issuer
+    cert-manager.io/cluster-issuer: "issuer"
 spec:
   ingressClassName: nginx
   rules:
-    - host: app.argocd.isaiahmichael.com  # Change to your actual domain
+    - host: app.argocd.isaiahmichael.com  # Replace with your real domain
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: the-app-hub  # Must match your Service name
+                name: the-app-hub  # Must match the actual Service name
                 port:
                   number: 80
   tls:
     - hosts:
         - app.argocd.isaiahmichael.com
-      secretName: the-app-hub-tls  # TLS secret created by cert-manager
+      secretName: the-app-hub-tls  # Created by cert-manager
