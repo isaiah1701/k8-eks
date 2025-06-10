@@ -1,5 +1,7 @@
 name: validation and backend of terraform 
-on: [push]
+on: 
+  push:
+    branches: [main, addCICD] 
 
 jobs:
   validate:
