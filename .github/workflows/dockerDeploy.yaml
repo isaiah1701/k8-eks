@@ -1,4 +1,4 @@
-name: push to ECR and deploy to EKS
+name: push to ECR and deploy to EKS to view flask app online 
 on:
   push:
     branches:
