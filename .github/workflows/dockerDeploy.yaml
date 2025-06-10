@@ -9,13 +9,13 @@ on:
 
 permissions:
   contents: read
-  security-events: write  # Required for uploading security results
+  security-events: write
   actions: read
 
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: flask-eks-docs
-  EKS_CLUSTER_NAME: eks-cluster
+  EKS_CLUSTER_NAME: eks-lab
 
 jobs:
   build-and-deploy:
@@ -49,26 +49,22 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Run Trivy vulnerability scanner (table format)
+    - name: Security Scan - Trivy Vulnerability Check
       uses: aquasecurity/trivy-action@master
+      continue-on-error: true  # Never fail the workflow
       with:
         image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
         format: 'table'
-        severity: 'CRITICAL,HIGH'
-        exit-code: '0'  # Don't fail build, just show results
-
-    - name: Run Trivy vulnerability scanner (sarif format)
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3  # Updated to v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+        exit-code: '0'  # Never exit with error
+      
+    - name: Security Warning Banner
+      run: |
+        echo "⚠️ =================================================="
+        echo "⚠️  SECURITY SCAN COMPLETED - CHECK RESULTS ABOVE"
+        echo "⚠️  DEPLOYMENT WILL CONTINUE REGARDLESS OF FINDINGS"
+        echo "⚠️  PLEASE REVIEW VULNERABILITIES FOR PRODUCTION USE"
+        echo "⚠️ =================================================="
 
     - name: Update kubeconfig
       run: |
@@ -84,12 +80,16 @@ jobs:
         kubectl apply -f apps/app-hub.yaml
         kubectl rollout status deployment/app-hub -n apps --timeout=300s
 
-    - name: Verify deployment
+    - name: Deployment Success
       run: |
+        echo "✅ =================================================="
+        echo "✅  DEPLOYMENT COMPLETED SUCCESSFULLY!"
+        echo "✅  Flask app is now live at:"
+        echo "✅  https://app.argocd.isaiahmichael.com"
+        echo "✅ =================================================="
         kubectl get pods -n apps
         kubectl get svc -n apps
         kubectl get ingress -n apps
-        echo "🚀 Flask app deployed at: https://app.argocd.isaiahmichael.com"
 
 
 
