@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">
+        <i class="fas fa-rocket text-blue-600 mr-3"></i>
+        EKS Projet Documentation
+    </h1>
+    <p class="text-xl text-gray-600 mb-6">
+        Complete Infrastructure-as-Code setup for production-ready EKS cluster
+    </p>
+    
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-blue-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2">Cluster Info</h3>
+            <ul class="space-y-2 text-gray-700">
+                <li><strong>Name:</strong> {{ project_config.cluster_name }}</li>
+                <li><strong>Region:</strong> {{ project_config.region }}</li>
+                <li><strong>Owner:</strong> {{ project_config.helm_owner }}</li>
+            </ul>
+        </div>
+        
+        <div class="bg-green-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-green-800 mb-2">Features</h3>
+            <ul class="space-y-2 text-gray-700">
+                <li>✅ Terraform automation</li>
+                <li>✅ GitOps with ArgoCD</li>
+                <li>✅ SSL with Cert Manager</li>
+                <li>✅ DNS automation</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="grid md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+            <i class="fas fa-cubes text-purple-600 mr-2"></i>Infrastructure
+        </h3>
+        <ul class="space-y-2 text-gray-600">
+            <li>• EKS Cluster</li>
+            <li>• VPC & Networking</li>
+            <li>• Security & IAM</li>
+        </ul>
+        <a href="/architecture" class="inline-block mt-4 text-purple-600 hover:underline">
+            View Architecture →
+        </a>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+            <i class="fas fa-cogs text-orange-600 mr-2"></i>Applications
+        </h3>
+        <ul class="space-y-2 text-gray-600">
+            <li>• NGINX Ingress</li>
+            <li>• Cert Manager</li>
+            <li>• External DNS</li>
+            <li>• ArgoCD</li>
+        </ul>
+        <a href="/components" class="inline-block mt-4 text-orange-600 hover:underline">
+            View Components →
+        </a>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+            <i class="fas fa-rocket text-blue-600 mr-2"></i>Deployment
+        </h3>
+        <ul class="space-y-2 text-gray-600">
+            <li>• GitHub Actions</li>
+            <li>• Terraform Steps</li>
+            <li>• Validation</li>
+        </ul>
+        <a href="/deployment" class="inline-block mt-4 text-blue-600 hover:underline">
+            View Process →
+        </a>
+    </div>
+</div>
+{% endblock %}

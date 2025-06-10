@@ -1,0 +1,34 @@
+name: validation and backend of terraform 
+on : [push]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.5.0
+
+      - name: Validate Terraform configuration
+        run: terraform validate
+
+  backend:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.5.0
+
+      - name: Initialize Terraform backend
+        run: terraform init
+
+      - name: Apply Terraform configuration
+        run: terraform apply -auto-approve

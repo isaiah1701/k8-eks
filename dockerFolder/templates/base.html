@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EKS Lab Documentation{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">
+                <i class="fas fa-dharmachakra mr-2"></i>
+                EKS Project - {{ project_config.helm_owner }}
+            </h1>
+            <div class="space-x-4">
+                <a href="/" class="hover:text-blue-200">Home</a>
+                <a href="/components" class="hover:text-blue-200">Components</a>
+                <a href="/deployment" class="hover:text-blue-200">Deployment</a>
+                <a href="/architecture" class="hover:text-blue-200">Architecture</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 mt-12">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 EKS Lab by {{ project_config.helm_owner }}</p>
+        </div>
+    </footer>
+</body>
+</html>

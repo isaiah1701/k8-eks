@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">
+        <i class="fas fa-rocket text-blue-600 mr-3"></i>
+        Deployment Process
+    </h1>
+</div>
+
+<div class="space-y-6">
+    {% for step in deployment_steps %}
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex items-start">
+            <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">
+                {{ step.step }}
+            </div>
+            <div class="flex-1">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ step.title }}</h3>
+                <p class="text-gray-600 mb-4">{{ step.description }}</p>
+                
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="text-green-400 text-sm font-medium mb-2">Commands:</div>
+                    {% for command in step.commands %}
+                    <div class="text-green-300 font-mono text-sm mb-1">$ {{ command }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
