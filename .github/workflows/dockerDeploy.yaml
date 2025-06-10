@@ -9,7 +9,7 @@ on:
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: flask-eks-docs
-  EKS_CLUSTER_NAME: eks-lab
+  EKS_CLUSTER_NAME: eks-cluster
 
 jobs:
   build-and-deploy:
