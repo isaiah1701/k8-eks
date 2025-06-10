@@ -39,4 +39,4 @@ def architecture_page():
                          project_config=project_config)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=5001)# Updated Tue Jun 10 20:47:44 BST 2025
