@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.6.0"
 
   backend "s3" {
     bucket  = "eks-s3-terraform-isaiah" # 🔁 Replace with your actual bucket name
