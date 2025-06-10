@@ -9,4 +9,4 @@ serviceAccount:
     eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/external-dns
 
 domainFilters:
-- lab.isaiahmichael.com
+- isaiahmichael.com              # This covers ALL subdomains
