@@ -29,7 +29,7 @@ module "external_dns_irsa_role" {
 
   attach_external_dns_policy = true
 
-  external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/YOUR_HOSTED_ZONE_ID"] # Replace with your actual hosted zone ARN
+  external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/eu-west-2"] # Replace with your actual hosted zone ARN
 
   oidc_providers = {
     ex = {

@@ -2,9 +2,9 @@ terraform {
   required_version = ">= 1.5.0"
 
   backend "s3" {
-    bucket  = "eks-s3-terraform-isaiah" # ✅ Replace with your actual S3 bucket name
+    bucket  = "eks-s3-terraform-isaiah" # 🔁 Replace with your actual bucket name
     key     = "eks-lab"
-    region  = "eu-west-2" # ✅ Replace with your actual region
+    region  = "eu-west-2"
     encrypt = true
   }
 
@@ -25,30 +25,38 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2" # ✅ Make sure this matches your backend region
+  region = "eu-west-2" # 🟢 Your region
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
-}
+# These two need EKS created first, so wrap them in a conditional logic or apply after EKS
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args = [
+      "eks", "get-token",
+      "--cluster-name", module.eks.cluster_name,
+      "--region", "eu-west-2"
+    ]
+  }
+}
 
 provider "helm" {
   kubernetes {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+      args = [
+        "eks", "get-token",
+        "--cluster-name", module.eks.cluster_name,
+        "--region", "eu-west-2"
+      ]
     }
   }
-
-
-
-
 }
-
-# ✅ Set to true if you want to skip TLS verification

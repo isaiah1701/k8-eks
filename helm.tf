@@ -1,5 +1,5 @@
 resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress-controller"
+  name       = "nginx-ingress"
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
 
@@ -11,7 +11,7 @@ resource "helm_release" "cert_manager" {
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "v1.14.4" # ✅ Pin to a stable version
+  version    = "v1.14.4"
 
   namespace        = "cert-manager"
   create_namespace = true
@@ -41,16 +41,14 @@ resource "helm_release" "external_dns" {
 }
 
 resource "helm_release" "argocd_deploy" {
-  name       = "argocd"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argo-cd"
-  version    = "5.43.0"
-  timeout    = 600
+  name       = "${var.helm_owner}-argocd"
+  chart      = "${path.module}/helm-charts/argo-cd"
+  version    = "8.0.16"
 
   namespace        = "argo-cd"
   create_namespace = true
 
   values = [
-   "${file("helm-values/argocd.yaml")}"
+    file("helm-values/argocd.yaml")
   ]
 }

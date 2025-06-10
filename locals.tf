@@ -1,6 +1,6 @@
 locals {
 
-  name   = "eks-lab"
+  name   = "eks-cluster"
   domain = "lab.isaiahmichael.com"
   region = "eu-west-2"
 

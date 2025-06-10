@@ -1,27 +1,24 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: issuer 
-
+  name: issuer
 spec:
   acme:
-    # The ACME server URL
     server: https://acme-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
     email: imichael1403@gmail.com
     privateKeySecretRef:
-      name: issuer 
+      name: issuer
     solvers:
-    - dns01:
-        route53:
-          region: eu-west-2
-          hostedZoneID: Z1R8UBAEXAMPLE
-      selector:
-        dnsZones:
-        - "lab.isaiahmichael.com"
-    - http01:
-        ingress:
-          class: nginx
+      - selector:
+          dnsZones:
+            - "lab.isaiahmichael.com"
+        dns01:
+          route53:
+            region: eu-west-2
+            hostedZoneID: Z1R8UBAEXAMPLE
+      - http01:
+          ingress:
+            class: nginx
 
 
       

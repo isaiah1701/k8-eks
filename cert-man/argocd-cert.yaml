@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-cert
+  namespace: argo-cd
+spec:
+  secretName: argocd-server-tls
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  dnsNames:
+    - argocd.isaiahmichael.com
+  issuerRef:
+    name: issuer
+    kind: ClusterIssuer

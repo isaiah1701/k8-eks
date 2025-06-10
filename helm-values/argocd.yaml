@@ -1,20 +1,19 @@
-extraArgs:
-  - --insecure
-  - --basehref
-  - --staticassets
- 
-server:
-  extraArgs:
-    - --insecure
+configs:
+  params:
+    server.insecure: false  # Use true ONLY if ArgoCD server listens on HTTP
 
+server:
   ingress:
     enabled: true
     ingressClassName: nginx
+    hostname: argocd.isaiahmichael.com
     annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "false"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-      nginx.org/hsts: "false"
-    hosts:
-      - argocd.isaiahmichael.com
-    # ❌ Remove TLS block entirely
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    tls: 
+      - hosts:
+          - argocd.isaiahmichael.com
+        secretName: argocd-tls
+
+

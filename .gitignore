@@ -1,4 +1,10 @@
 .terraform/
-.env
-
-removeenv/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+terraform.tfvars
+*.kube/
+*.pem
+*.key
+*.crt

@@ -4,9 +4,14 @@ metadata:
   name: the-app-hub-ingress
   namespace: apps
   annotations:
-    cert-manager.io/cluster-issuer: "issuer"
+    cert-manager.io/cluster-issuer: issuer
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - app.argocd.isaiahmichael.com
+      secretName: the-app-hub-tls
   rules:
     - host: app.argocd.isaiahmichael.com
       http:
@@ -18,7 +23,3 @@ spec:
                 name: the-app-hub
                 port:
                   number: 80
-  tls:
-    - hosts:
-        - app.argocd.isaiahmichael.com
-      secretName: the-app-hub-tls
