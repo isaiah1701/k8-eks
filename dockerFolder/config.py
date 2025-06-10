@@ -1,5 +1,5 @@
 project_config = {
-    "cluster_name": "eks-lab",
+    "cluster_name": "eks-cluster",
     "region": "eu-west-2",
     "helm_owner": "isaiah4748",
     "iam_user": "isaiah4748",
