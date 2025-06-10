@@ -60,8 +60,12 @@ jobs:
       - name: Initialize Terraform
         id: init
         run: |
-          echo "🚀 Initializing Terraform..."
-          terraform init || {
+          echo "🚀 Initializing Terraform with S3 backend and DynamoDB locking..."
+          terraform init -backend-config="bucket=eks-s3-terraform-isaiah" \
+                         -backend-config="key=eks-lab" \
+                         -backend-config="region=eu-west-2" \
+                         -backend-config="dynamodb_table=terraform-state-locks" \
+                         -backend-config="encrypt=true" || {
             echo "❌ Terraform init failed"
             exit 1
           }
