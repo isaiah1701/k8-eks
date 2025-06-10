@@ -75,9 +75,13 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
+        # Update to use specific commit SHA, not latest
         sed -i "s|image:.*|image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" apps/app-backend.yaml
         kubectl apply -f apps/app-backend.yaml
         kubectl apply -f apps/app-hub.yaml
+        
+        # Force restart deployment to pull new image
+        kubectl rollout restart deployment/app-hub -n apps
         kubectl rollout status deployment/app-hub -n apps --timeout=300s
 
     - name: Deployment Success
