@@ -40,3 +40,4 @@ def architecture_page():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)# Updated Tue Jun 10 20:47:44 BST 2025
+# Updated Tue Jun 10 20:54:36 BST 2025
