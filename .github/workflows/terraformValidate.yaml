@@ -1,5 +1,7 @@
 name: validation and backend of terraform 
-on: [push]
+on: 
+  push:
+    branches: [main, addCICD] 
 
 jobs:
   validate:
@@ -27,7 +29,11 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
+<<<<<<< HEAD
         run: terraform plan -input=false -no-color  # Add these flags
+=======
+        run: terraform plan -input=false -var-file="terraform.tfvars"  # Add these flags
+>>>>>>> addCICD
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,4 +59,8 @@ jobs:
         run: terraform init
 
       - name: Apply Terraform configuration
+<<<<<<< HEAD
         run: terraform apply -auto-approve -input=false  # Add -input=false
+=======
+        run: terraform apply -auto-approve -input=false -var-file="terraform.tfvars"  # Add flags
+>>>>>>> addCICD
