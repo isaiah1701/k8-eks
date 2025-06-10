@@ -2,10 +2,11 @@ terraform {
   required_version = ">= 1.6.0"
 
   backend "s3" {
-    bucket  = "eks-s3-terraform-isaiah" # 🔁 Replace with your actual bucket name
-    key     = "eks-lab"
-    region  = "eu-west-2"
-    encrypt = true
+    bucket         = "eks-s3-terraform-isaiah"
+    key            = "eks-lab"
+    region         = "eu-west-2"
+    encrypt        = true
+    dynamodb_table = "terraform-state-locks"
   }
 
   required_providers {
@@ -25,10 +26,9 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2" # 🟢 Your region
+  region = "eu-west-2"
 }
 
-# These two need EKS created first, so wrap them in a conditional logic or apply after EKS
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
