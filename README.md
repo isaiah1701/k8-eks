@@ -41,6 +41,10 @@ This end-to-end setup reflects real-world production infrastructure aligned with
 - RBAC (Role-Based Access Control)  
   Implements namespace-scoped and cluster-wide permissions 🛡️ to secure access to Kubernetes resources and ensure principle of least privilege.
 
+# Architecture 
+
+
+![Diagram](images/architectureDiagramEKS.png)
 
 
 # Why This Setup Adds Real Value in a Production Environment

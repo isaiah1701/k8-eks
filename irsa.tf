@@ -5,7 +5,7 @@ module "cert_manager_irsa_role" {
 
   attach_cert_manager_policy = true
 
-  cert_manager_hosted_zone_arns = ["arn:aws:route53:::hostedzone/YOUR_HOSTED_ZONE_ID"] # Replace with your actual hosted zone ARN
+  cert_manager_hosted_zone_arns = ["arn:aws:route53:::hostedzone/Z03994962AFOWF5PYD3N9"] # Replace with your actual hosted zone ARN
 
   oidc_providers = {
     ex = {

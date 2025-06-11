@@ -11,7 +11,7 @@ spec:
     solvers:
       - selector:
           dnsZones:
-            - "lab.isaiahmichael.com"
+            - "argocd.isaiahmichael.com"
         dns01:
           route53:
             region: eu-west-2
