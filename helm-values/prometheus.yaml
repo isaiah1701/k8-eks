@@ -8,13 +8,12 @@ prometheus:
       volumeClaimTemplate:
         spec:
           accessModes: ["ReadWriteOnce"]
+          storageClassName: "gp2"  # ADD: EKS default storage class
           resources:
             requests:
               storage: 20Gi
-    # Monitor ArgoCD and other services
-    serviceMonitorNamespaceSelector:
-      matchLabels:
-        name: argo-cd
+    # Monitor all namespaces
+    serviceMonitorNamespaceSelector: {}  # CHANGED: Monitor all namespaces
     serviceMonitorSelector: {}
     ruleSelector: {}
 
@@ -22,6 +21,10 @@ prometheus:
 grafana:
   enabled: true
   adminPassword: admin123
+  persistence:
+    enabled: true
+    storageClassName: "gp2"  # ADD: EKS storage class
+    size: 10Gi
   # Don't create ingress here - we'll use separate file
   ingress:
     enabled: false
@@ -34,6 +37,7 @@ alertmanager:
       volumeClaimTemplate:
         spec:
           accessModes: ["ReadWriteOnce"]
+          storageClassName: "gp2"  # ADD: EKS storage class
           resources:
             requests:
               storage: 2Gi

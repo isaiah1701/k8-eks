@@ -1,6 +1,6 @@
 configs:
   params:
-    server.insecure: false  # Use true ONLY if ArgoCD server listens on HTTP
+    server.insecure: false
 
 server:
   ingress:
@@ -11,43 +11,54 @@ server:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      external-dns.alpha.kubernetes.io/hostname: argocd.isaiahmichael.com  # ADD: For DNS management
-      cert-manager.io/cluster-issuer: letsencrypt-prod  # ADD: For SSL certificates
+      external-dns.alpha.kubernetes.io/hostname: argocd.isaiahmichael.com
+      cert-manager.io/cluster-issuer: letsencrypt-prod
     tls: 
       - hosts:
           - argocd.isaiahmichael.com
         secretName: argocd-tls
   
-  # ADD: Enable metrics for monitoring
+  # Enable metrics
   metrics:
     enabled: true
     serviceMonitor:
       enabled: true
-      namespace: argo-cd
+      additionalLabels:
+        release: monitoring  # ADD: Match Prometheus selector
 
-# ADD: Enable metrics for other components
+# Enable metrics for all components
 controller:
   metrics:
     enabled: true
     serviceMonitor:
       enabled: true
-      namespace: argo-cd
+      additionalLabels:
+        release: monitoring
 
 repoServer:
   metrics:
     enabled: true
     serviceMonitor:
       enabled: true
-      namespace: argo-cd
+      additionalLabels:
+        release: monitoring
 
 redis:
   metrics:
     enabled: true
     serviceMonitor:
       enabled: true
-      namespace: argo-cd
+      additionalLabels:
+        release: monitoring
 
-# ADD: Global domain configuration
+dex:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: monitoring
+
 global:
   domain: argocd.isaiahmichael.com
 

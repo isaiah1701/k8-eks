@@ -66,7 +66,7 @@ resource "helm_release" "prometheus_stack" {
   ]
   
   depends_on = [
-    helm_release.argocd,
+    helm_release.argocd_deploy,     # CHANGED: Use correct resource name
     helm_release.nginx_ingress,
     helm_release.cert_manager
   ]
