@@ -194,6 +194,66 @@ echo
 - Certificates will be automatically issued for all ingresses!
 
 
+7. Install ExternalDNS
+
+```bash
+# Create external-dns namespace
+kubectl create namespace external-dns
+
+# Add ExternalDNS Helm repository
+helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
+helm repo update
+
+# Install ExternalDNS for Cloudflare
+helm install external-dns external-dns/external-dns \
+  --namespace external-dns \
+  --values helm-values/external-dns.yaml
+
+# Verify installation
+kubectl get pods -n external-dns
+kubectl logs -n external-dns deployment/external-dns --tail=20
+```
+
+**Expected output:**
+- ExternalDNS pod should be `Running`
+- Logs should show DNS records being created/updated
+
+**Result:** All ingresses will automatically get DNS records in Cloudflare! 🌐 
+**Note:**  A cloudflare API key is required for External DNS via Cloudflare!
+
+
+
+8. Clean up resources 
+
+```bash
+
+terraform destroy
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
