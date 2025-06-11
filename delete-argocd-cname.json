@@ -1,0 +1,17 @@
+{
+  "Changes": [
+    {
+      "Action": "DELETE",
+      "ResourceRecordSet": {
+        "Name": "argocd.lab.lab.isaiahmichael.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "a34be7feb9ca9471b940efe62ebbe472-2085079589.eu-west-2.elb.amazonaws.com"
+          }
+        ]
+      }
+    }
+  ]
+}

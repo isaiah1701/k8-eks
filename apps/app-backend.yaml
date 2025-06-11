@@ -23,9 +23,9 @@ spec:
       containers:
       - name: app-hub
         image: 282378667097.dkr.ecr.eu-west-2.amazonaws.com/flask-eks-docs:latest
-        imagePullPolicy: Always  # forces pulling latest image
+        imagePullPolicy: Always
         ports:
-        - containerPort: 5000
+        - containerPort: 5000  # FIXED: Your Flask app runs on 5000
 ---
 apiVersion: v1
 kind: Service
@@ -39,6 +39,6 @@ spec:
     app: app-hub
   ports:
     - port: 80
-      targetPort: 5001
+      targetPort: 5000  # FIXED: Match container port
       name: http
   type: ClusterIP

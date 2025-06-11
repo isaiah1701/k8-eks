@@ -1,12 +1,25 @@
-provider: aws
+# Cloudflare external-dns chart configuration
+provider: cloudflare
 
-env: 
-- name: AWS_DEFAULT_REGION
-  value: eu-west-2
-
-serviceAccount:
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/external-dns
+# Use the cloudflare section for API token configuration
+cloudflare:
+  apiToken: "cRJMG9Gu2Am0-nhTIS2xMeigkkwOMhGxo1LYMPQV"
+  email: "imichael1403@gmail.com"
+  proxied: false  # Forces DNS-only (gray cloud)
 
 domainFilters:
-- isaiahmichael.com              # This covers ALL subdomains
+  - isaiahmichael.com
+  - argocd.isaiahmichael.com
+  - app.argocd.isaiahmichael.com
+  - prometheus.argocd.isaiahmichael.com
+  - grafana.argocd.isaiahmichael.com
+
+policy: sync
+txtOwnerId: "eks-cluster"
+logLevel: info
+interval: 1m
+
+# Cloudflare specific settings
+sources:
+  - service
+  - ingress

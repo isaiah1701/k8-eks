@@ -1,0 +1,18 @@
+aws route53 change-resource-record-sets --hosted-zone-id Z0758674EOVNYUNIIUR4 --change-batch '{
+  "Changes": [
+    {
+      "Action": "DELETE",
+      "ResourceRecordSet": {
+        "Name": "_external-dns.lab.isaiahmichael.com.",
+        "Type": "TXT",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "\"heritage=external-dns,external-dns/owner=eks-cluster\""
+          }
+        ]
+      }
+    }
+  ]
+}'
+

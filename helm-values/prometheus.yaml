@@ -3,15 +3,8 @@ prometheus:
   prometheusSpec:
     # How long to keep metrics
     retention: 15d
-    # Storage size
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          storageClassName: "gp2"  # ADD: EKS default storage class
-          resources:
-            requests:
-              storage: 20Gi
+    # Explicitly disable storage
+    storageSpec: {}
     # Monitor all namespaces
     serviceMonitorNamespaceSelector: {}  # CHANGED: Monitor all namespaces
     serviceMonitorSelector: {}
@@ -21,26 +14,17 @@ prometheus:
 grafana:
   enabled: true
   adminPassword: admin123
+  # Explicitly disable persistence
   persistence:
-    enabled: true
-    storageClassName: "gp2"  # ADD: EKS storage class
-    size: 10Gi
+    enabled: false
   # Don't create ingress here - we'll use separate file
   ingress:
     enabled: false
 
-# Alert Manager
+# Alert Manager - explicitly disable storage
 alertmanager:
   enabled: true
-  alertmanagerSpec:
-    storage:
-      volumeClaimTemplate:
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          storageClassName: "gp2"  # ADD: EKS storage class
-          resources:
-            requests:
-              storage: 2Gi
+  alertmanagerSpec: {}
 
 # Node Exporter
 nodeExporter:
