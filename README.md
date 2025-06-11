@@ -3,7 +3,7 @@
 ## Overview  
 This project delivers a production-ready EKS (Elastic Kubernetes Service) setup on AWS, emphasizing automation, security 🔒, and observability 📊. It combines GitOps workflows, secure CI/CD pipelines, infrastructure as code, and full monitoring.
 
-Key components include GitOps with ArgoCD 🔁, Docker-based deployments to EKS 🐳, automated certificate and DNS management 🌐, and real-time monitoring with Prometheus and Grafana 📈. CI/CD pipelines are used to scan infrastructure and container images for security issues, build Docker images, and deploy applications to Kubernetes automatically.
+Key components include GitOps with ArgoCD 🔁, Docker-based deployments to EKS 🐳, automated certificate and DNS management 🌐, real-time monitoring with Prometheus and Grafana 📈, and fine-grained access control using RBAC 🛡️. CI/CD pipelines are used to scan infrastructure and container images for security issues, build Docker images, and deploy applications to Kubernetes automatically.
 
 This end-to-end setup reflects real-world production infrastructure aligned with modern DevOps best practices ✅.
 
@@ -37,6 +37,9 @@ This end-to-end setup reflects real-world production infrastructure aligned with
 
 - Prometheus and Grafana  
   Provides metrics scraping, alerting, and rich real-time dashboarding 📊 to monitor application health and infrastructure performance.
+
+- RBAC (Role-Based Access Control)  
+  Implements namespace-scoped and cluster-wide permissions 🛡️ to secure access to Kubernetes resources and ensure principle of least privilege.
 
 
 
