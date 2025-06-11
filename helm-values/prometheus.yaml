@@ -1,0 +1,47 @@
+# Prometheus configuration
+prometheus:
+  prometheusSpec:
+    # How long to keep metrics
+    retention: 15d
+    # Storage size
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+    # Monitor ArgoCD and other services
+    serviceMonitorNamespaceSelector:
+      matchLabels:
+        name: argo-cd
+    serviceMonitorSelector: {}
+    ruleSelector: {}
+
+# Grafana configuration
+grafana:
+  enabled: true
+  adminPassword: admin123
+  # Don't create ingress here - we'll use separate file
+  ingress:
+    enabled: false
+
+# Alert Manager
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi
+
+# Node Exporter
+nodeExporter:
+  enabled: true
+
+# State Metrics
+kubeStateMetrics:
+  enabled: true

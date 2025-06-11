@@ -52,3 +52,22 @@ resource "helm_release" "argocd_deploy" {
     file("helm-values/argocd.yaml")
   ]
 }
+
+resource "helm_release" "prometheus_stack" {
+  name       = "monitoring"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  namespace  = "monitoring"
+  
+  create_namespace = true
+  
+  values = [
+    file("${path.module}/helm-values/prometheus.yaml")
+  ]
+  
+  depends_on = [
+    helm_release.argocd,
+    helm_release.nginx_ingress,
+    helm_release.cert_manager
+  ]
+}
