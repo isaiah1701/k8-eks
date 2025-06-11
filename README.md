@@ -16,8 +16,8 @@ This project deploys a production-ready EKS (Elastic Kubernetes Service) cluster
 
 This setup follows modern DevOps best practices to ensure scalability, automation, and high availability.
 
-🔑 Key Features
-☁️ Amazon EKS
+# Key Features
+ Amazon EKS
 Fully managed Kubernetes on AWS — handles the control plane, scaling, and integrates seamlessly with other AWS services.
 
 🚀 ArgoCD
