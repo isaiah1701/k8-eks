@@ -1,5 +1,7 @@
-🛠️ EKS Cluster Deployment with ArgoCD, Helm Charts, Cert-Manager, ExternalDNS, Prometheus & Grafana
-📄 Overview
+# EKS Cluster Deployment with ArgoCD, Helm Charts, Cert-Manager, ExternalDNS, Prometheus & Grafana
+
+
+# Overview
 This project deploys a production-ready EKS (Elastic Kubernetes Service) cluster on AWS. It integrates powerful Kubernetes tools to automate infrastructure, secure communication, and monitor performance:
 
 🔁 ArgoCD for GitOps-based continuous deployment
