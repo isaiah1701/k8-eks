@@ -1,13 +1,15 @@
 # EKS Cluster Infrastructure Deployment with GitOps, CI/CD, Security, and Monitoring
 
 ## Overview  
-This project provisions a production-grade Kubernetes cluster on AWS using EKS (Elastic Kubernetes Service) to deploy and manage a Flask-based web application. The app was hosted at `app.argocd.isaiahmichael.com` and included multiple endpoints such as `/deployment`, `/components`, and `/architecture`.
+This project provisions a production-grade Kubernetes cluster on AWS using EKS (Elastic Kubernetes Service) to deploy and manage a Flask-based web application. The app was hosted at `app.argocd.isaiahmichael.com` and included multiple endpoints such as `/deployment`, `/api`, and `/health`.
 
-The entire stack was built using infrastructure-as-code (Terraform), GitOps (ArgoCD), and CI/CD automation (GitHub Actions). It includes HTTPS, DNS automation, RBAC-based access control, and a full monitoring stack with Prometheus and Grafana.
+The infrastructure was built using Terraform, GitHub Actions, and ArgoCD for GitOps-based deployment. It includes automated TLS certificates, DNS management, RBAC access control, and a full observability stack using Prometheus and Grafana.
 
-The goal was to create a secure, scalable, and fully automated infrastructure setup that reflects real-world DevOps workflows used in production teams.
+The goal was to build a secure, scalable, and fully automated environment that reflects real-world DevOps workflows used in production teams.
 
-> **Note:** The live environment has now been decommissioned. Screenshots and configuration files in this repository serve as documentation of the system in action.
+> **Note:** The live application is now decommissioned. Screenshots and configuration files serve as evidence of functionality.  
+> Source code available at: [github.com/isaiah1701/k8-eks](https://github.com/isaiah1701/k8-eks)
+
 
 
 ---
@@ -278,186 +280,176 @@ This dual-pipeline approach provides **infrastructure-as-code automation** with 
 - Implement autoscaling and multi-AZ node groups for full HA
 
 
-# Setup instructions 
+# Setup Instructions
 
-1. Clone the Repository
+## Prerequisites
+- AWS CLI configured with appropriate permissions
+- kubectl installed
+- Helm 3.x installed
+- Terraform installed
+- Valid domain name with Cloudflare DNS management
+
+---
+
+## 1. Repository Setup
+
+```bash
 git clone [repo-url]
-cd [repo-directory]
+cd k8s-advanced-lab
+```
 
- 2. Provision EKS Cluster with Terraform
+## 2. Infrastructure Provisioning
+
+```bash
+# Initialize and apply Terraform configuration
 terraform init
 terraform plan
 terraform apply
 
+# Configure kubectl to connect to your new cluster
+aws eks update-kubeconfig --region <region> --name <cluster-name>
 
-3. Configure kubectl
-aws eks --region <region> update-kubeconfig --name <cluster-name>
+# Verify cluster connectivity
 kubectl get nodes
+```
 
+## 3. ArgoCD Installation
 
-4. Configure argocd via helm
-Add the ArgoCD Helm repository
+```bash
+# Add ArgoCD Helm repository
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 
-Install ArgoCD using your values file
+# Install ArgoCD with custom configuration
+kubectl create namespace argo-cd
 helm install argocd argo/argo-cd \
   --namespace argo-cd \
   --values helm-values/argocd.yaml
 
+# Get initial admin password
+kubectl -n argo-cd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d
+```
 
-
-5. Install cert-manager
+## 4. Certificate Management
 
 ```bash
-# Create cert-manager namespace
-kubectl create namespace cert-manager
-
-# Add cert-manager Helm repository
+# Install cert-manager for automatic SSL certificates
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 
-# Install cert-manager with CRDs
+kubectl create namespace cert-manager
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --values helm-values/cert-manager.yaml \
   --set crds.enabled=true
 
-# Wait for cert-manager pods to be ready
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cert-manager -n cert-manager --timeout=300s
-
-# Create Let's Encrypt cluster issuer
+# Configure Let's Encrypt certificate issuer
 kubectl apply -f helm-values/letsencrypt-clusterissuer.yaml
 
 # Verify installation
-kubectl get pods -n cert-manager
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cert-manager -n cert-manager --timeout=300s
 kubectl get clusterissuer letsencrypt-prod
 ```
 
-**Expected output:**
-- All cert-manager pods should be `Running`
-- ClusterIssuer should show `READY: True`
-
-**Get ArgoCD admin password:**
-```bash
-kubectl -n argo-cd get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d
-echo
-```
-
-**Access your applications:**
-- ArgoCD: https://argocd.isaiahmichael.com (admin / password-from-above)
-- Certificates will be automatically issued for all ingresses!
-
-6. Install Prometheus and Grafana
+## 5. Monitoring Stack
 
 ```bash
-# Create monitoring namespace
-kubectl create namespace monitoring
-
-# Add Prometheus community Helm repository
+# Install Prometheus and Grafana
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
-# Install Prometheus and Grafana stack
+kubectl create namespace monitoring
 helm install monitoring prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
   --values helm-values/prometheus.yaml
 
-# Wait for all pods to be ready
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=grafana -n monitoring --timeout=300s
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=prometheus -n monitoring --timeout=300s
-
-# Apply ingresses for external access
+# Configure ingress for external access
 kubectl apply -f apps/monitoring-ingress.yaml
 
-# Verify installation
-kubectl get pods -n monitoring
-kubectl get ingresses -n monitoring
+# Verify deployment
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=grafana -n monitoring --timeout=300s
 kubectl get certificates -n monitoring
 ```
 
-**Expected output:**
-- All monitoring pods should be `Running`
-- Ingresses should have ADDRESS assigned
-- Certificates should show `READY: True`
-
-**Access your monitoring:**
-- Grafana: https://grafana.argocd.isaiahmichael.com
-  - Username: `admin`
-  - Password: `admin123` (from your prometheus.yaml config)
-- Prometheus: https://prometheus.argocd.isaiahmichael.com
-
-**Verify certificates are working:**
-```bash
-# Check certificate status
-kubectl get certificates -n monitoring
-
-# Should show:
-# grafana-tls      True    grafana-tls      
-# prometheus-tls   True    prometheus-tls   
-```
-6. Install cert-manager
+## 6. DNS Automation
 
 ```bash
-# Create cert-manager namespace
-kubectl create namespace cert-manager
-
-# Add cert-manager Helm repository
-helm repo add jetstack https://charts.jetstack.io
-helm repo update
-
-# Install cert-manager with CRDs
-helm install cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --values helm-values/cert-manager.yaml \
-  --set crds.enabled=true
-
-# Wait for cert-manager pods to be ready
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cert-manager -n cert-manager --timeout=300s
-
-# Create Let's Encrypt cluster issuer
-kubectl apply -f helm-values/letsencrypt-clusterissuer.yaml
-
-# Verify installation
-kubectl get pods -n cert-manager
-kubectl get clusterissuer letsencrypt-prod
-```
-
-
-
-7. Install ExternalDNS
-
-```bash
-# Create external-dns namespace
-kubectl create namespace external-dns
-
-# Add ExternalDNS Helm repository
+# Install ExternalDNS for automatic DNS record management
 helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
 helm repo update
 
-# Install ExternalDNS for Cloudflare
+kubectl create namespace external-dns
 helm install external-dns external-dns/external-dns \
   --namespace external-dns \
   --values helm-values/external-dns.yaml
 
-# Verify installation
-kubectl get pods -n external-dns
+# Verify DNS automation is working
 kubectl logs -n external-dns deployment/external-dns --tail=20
 ```
 
-**Expected output:**
-- ExternalDNS pod should be `Running`
-- Logs should show DNS records being created/updated
+---
 
-**Result:** All ingresses will automatically get DNS records in Cloudflare! 🌐 
-**Note:**  A cloudflare API key is required for External DNS via Cloudflare!
+## Verification & Access
 
+Once all components are deployed, you can access:
 
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **ArgoCD** | https://argocd.isaiahmichael.com | admin / [password from step 3] |
+| **Grafana** | https://grafana.argocd.isaiahmichael.com | admin / admin123 |
+| **Prometheus** | https://prometheus.argocd.isaiahmichael.com | - |
 
-8. Clean up resources 
+### Health Checks
 
 ```bash
+# Verify all pods are running
+kubectl get pods --all-namespaces
 
+# Check certificate status
+kubectl get certificates --all-namespaces
+
+# Verify ingress configurations
+kubectl get ingress --all-namespaces
+```
+
+---
+
+## Cleanup
+
+To tear down the entire infrastructure:
+
+```bash
+# Remove Kubernetes resources first
+helm uninstall external-dns -n external-dns
+helm uninstall monitoring -n monitoring
+helm uninstall cert-manager -n cert-manager
+helm uninstall argocd -n argo-cd
+
+# Destroy AWS infrastructure
 terraform destroy
+```
+
+---
+
+## Troubleshooting
+
+**Common Issues:**
+
+- **Certificate not ready**: Wait 2-3 minutes for Let's Encrypt validation
+- **DNS records not created**: Verify Cloudflare API token permissions
+- **Pod startup failures**: Check resource limits and node capacity
+- **Access denied**: Verify RBAC configuration and AWS IAM permissions
+
+**Useful Commands:**
+
+```bash
+# Check pod logs
+kubectl logs -f <pod-name> -n <namespace>
+
+# Describe resources for troubleshooting
+kubectl describe <resource-type> <resource-name> -n <namespace>
+
+# Check cluster events
+kubectl get events --sort-by='.lastTimestamp' -A
 ```
