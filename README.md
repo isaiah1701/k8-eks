@@ -1,9 +1,14 @@
 # EKS Cluster Infrastructure Deployment with GitOps, CI/CD, Security, and Monitoring
 
 ## Overview  
-This project provisions a production-ready Kubernetes cluster on AWS using EKS (Elastic Kubernetes Service). The cluster is used to securely host a containerized website, managed entirely through infrastructure-as-code and GitOps workflows.
+This project provisions a production-grade Kubernetes cluster on AWS using EKS (Elastic Kubernetes Service) to deploy and manage a Flask-based web application. The app was hosted at `app.argocd.isaiahmichael.com` and included multiple endpoints such as `/deployment`, `/api`, and `/health`.
 
-The setup reflects real-world DevOps practices: automated deployments, continuous monitoring, secure configurations, and full traceability — built for reliability and maintainability in a production context.
+The entire stack was built using infrastructure-as-code (Terraform), GitOps (ArgoCD), and CI/CD automation (GitHub Actions). It includes HTTPS, DNS automation, RBAC-based access control, and a full monitoring stack with Prometheus and Grafana.
+
+The goal was to create a secure, scalable, and fully automated infrastructure setup that reflects real-world DevOps workflows used in production teams.
+
+> **Note:** The live environment has now been decommissioned. Screenshots and configuration files in this repository serve as documentation of the system in action.
+
 
 ---
 
@@ -264,6 +269,13 @@ In a production environment, you might want to:
 - Add comprehensive testing stages
 
 This dual-pipeline approach provides **infrastructure-as-code automation** with **continuous application deployment**, while maintaining security visibility throughout the process.
+
+
+## Future Improvements
+- Convert app deployment pipeline to full GitOps model (ArgoCD-based sync)
+- Add unit/integration testing stage in CI/CD
+- Set up centralized logging with Loki or ELK stack
+- Implement autoscaling and multi-AZ node groups for full HA
 
 
 # Setup instructions 
