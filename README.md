@@ -149,6 +149,119 @@ Cert-Manager: Handles SSL/TLS certificate issuance and renewal.
 ExternalDNS: Automates DNS record updates in AWS Route 53.
 
 
+# CI/CD Pipeline Architecture
+
+This project implements two complementary GitHub Actions workflows that automate infrastructure provisioning, security scanning, and application deployment.
+
+## Pipeline 1: Infrastructure Validation & Deployment
+**File:** `.github/workflows/terraformValidate.yaml`
+
+### What it does:
+This pipeline handles the **infrastructure layer** - creating and managing your EKS cluster and AWS resources.
+
+### Workflow Steps:
+1. **Security Scanning with Checkov** 🔍
+   - Scans Terraform code for misconfigurations and security violations
+   - Checks for AWS best practices (encrypted storage, proper IAM, etc.)
+   - **Continues deployment even if issues found** (warnings only)
+
+2. **Terraform Infrastructure Management** 🏗️
+   - **Validates** Terraform syntax and configuration
+   - **Plans** changes to show what will be created/modified
+   - **Applies** changes to provision EKS cluster, VPC, IAM roles, etc.
+   - Uses **S3 backend** for state management with **DynamoDB locking**
+
+3. **Error Handling** ⚠️
+   - Gracefully handles existing resources
+   - Continues workflow even if some steps fail
+   - Provides detailed status summaries
+
+### Triggers:
+- Pushes to `main` or `addCICD` branches
+- Changes to any Terraform files
+
+---
+
+## Pipeline 2: Application Build & Deployment
+**File:** `.github/workflows/dockerDeploy.yaml`
+
+### What it does:
+This pipeline handles the **application layer** - building, scanning, and deploying your Flask web application.
+
+### Workflow Steps:
+1. **Docker Image Build** 🐳
+   - Builds Docker image from `dockerFolder/`
+   - Tags with commit SHA for version tracking
+   - Pushes to **Amazon ECR** (Elastic Container Registry)
+
+2. **Security Scanning with Trivy** 🧪
+   - Scans Docker images for vulnerabilities
+   - Checks for known CVEs in dependencies
+   - Reports **CRITICAL, HIGH, MEDIUM, LOW** severity issues
+   - **Never blocks deployment** (security awareness, not gates)
+
+3. **Kubernetes Deployment** 🚀
+   - Updates Kubernetes manifests with new image tag
+   - Applies manifests directly to EKS cluster
+   - Forces pod restart to pull new image
+   - Waits for successful rollout
+
+### Triggers:
+- Pushes to `main` branch
+- **Only when files in `dockerFolder/` change**
+
+---
+
+## Pipeline Integration Flow
+
+```mermaid
+graph TD
+    A[Code Push] --> B{Which Files Changed?}
+    B -->|Terraform Files| C[Pipeline 1: Infrastructure]
+    B -->|dockerFolder Files| D[Pipeline 2: Application]
+    
+    C --> E[Checkov Scan]
+    E --> F[Terraform Apply]
+    F --> G[EKS Cluster Ready]
+    
+    D --> H[Build Docker Image]
+    H --> I[Trivy Security Scan]
+    I --> J[Deploy to EKS]
+    J --> K[App Live at app.argocd.isaiahmichael.com]
+```
+
+## Key Pipeline Features
+
+### Security-First Approach 🔒
+- **Checkov** scans infrastructure code for AWS security best practices
+- **Trivy** scans container images for known vulnerabilities
+- Both tools provide **warnings without blocking** deployment
+
+### Automated State Management 📊
+- Terraform state stored in **S3** with **DynamoDB locking**
+- Prevents concurrent modifications and state corruption
+- Enables team collaboration on infrastructure
+
+### Direct Deployment (Not GitOps) ⚡
+- Pipeline 2 uses **direct kubectl deployment**
+- Updates manifests and applies immediately
+- **Note:** This bypasses ArgoCD - could be converted to GitOps by committing manifest changes instead
+
+### Environment Isolation 🏗️
+- Each pipeline has specific triggers and permissions
+- Infrastructure and application deployments are independent
+- Supports different development workflows
+
+### Production Considerations 🚀
+In a production environment, you might want to:
+- Convert Pipeline 2 to GitOps (commit manifest changes for ArgoCD to sync)
+- Add approval gates for production deployments
+- Implement vulnerability thresholds that block deployment
+- Add comprehensive testing stages
+
+This dual-pipeline approach provides **infrastructure-as-code automation** with **continuous application deployment**, while maintaining security visibility throughout the process.
+
+
 # Setup instructions 
 
 1. Clone the Repository
@@ -346,64 +459,3 @@ kubectl logs -n external-dns deployment/external-dns --tail=20
 
 terraform destroy
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
