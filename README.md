@@ -1,7 +1,7 @@
 # EKS Cluster Infrastructure Deployment with GitOps, CI/CD, Security, and Monitoring
 
 ## Overview  
-This project provisions a production-grade Kubernetes cluster on AWS using EKS (Elastic Kubernetes Service) to deploy and manage a Flask-based web application. The app was hosted at `app.argocd.isaiahmichael.com` and included multiple endpoints such as `/deployment`, `/api`, and `/health`.
+This project provisions a production-grade Kubernetes cluster on AWS using EKS (Elastic Kubernetes Service) to deploy and manage a Flask-based web application. The app was hosted at `app.argocd.isaiahmichael.com` and included multiple endpoints such as `/deployment`, `/components`, and `/architecture`.
 
 The entire stack was built using infrastructure-as-code (Terraform), GitOps (ArgoCD), and CI/CD automation (GitHub Actions). It includes HTTPS, DNS automation, RBAC-based access control, and a full monitoring stack with Prometheus and Grafana.
 
