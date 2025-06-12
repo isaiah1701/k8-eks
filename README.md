@@ -43,9 +43,75 @@ This end-to-end setup reflects real-world production infrastructure aligned with
 
 # Architecture 
 
+## System Overview
+![System Architecture](images/architectureDiagramEKS.png)
 
-![Diagram](images/architectureDiagramEKS.png)
+The overall architecture shows the complete EKS deployment with GitOps, monitoring, and security components integrated across AWS services.
 
+## Component Diagrams
+
+### ArgoCD GitOps Management
+![ArgoCD Architecture](images/argocdDiagramEKS.png)
+Illustrates how ArgoCD manages application deployments through Git-based workflows, automatically syncing repository changes to the EKS cluster.
+
+### Application Website & Components
+![App Architecture](images/app.argocdDiagramEKS.png)
+Shows the main Flask application architecture hosted at app.argocd.isaiahmichael.com with its various components and microservices.
+
+![Component Architecture](images/component.app.argocdDiagramEKS.png)
+Details the individual components that make up the application stack, including backend services, databases, and API endpoints.
+
+### Application Deployment Pipeline
+![Deployment Flow](images/deployment.app.argocdDiagramEKS.png)
+Shows the CI/CD pipeline flow from code commit through security scanning, Docker image building, and Kubernetes deployment for the Flask application and its subdomains (/deployment, /api, etc.).
+
+### Monitoring Infrastructure
+
+![Grafana Dashboard](images/grafanaDiagramEKS.png)
+Displays the monitoring architecture with Grafana providing real-time dashboards for application and infrastructure metrics collected by Prometheus.
+
+![Prometheus Architecture](images/prometheusDiagramEKS.png)
+Shows how Prometheus scrapes metrics from various Kubernetes components, the Flask application, and infrastructure to provide comprehensive observability.
+
+### Application Architecture & Infrastructure
+![App Infrastructure](images/architecture.app.argocdDiagramEKS.png)
+Comprehensive view of how the Flask application integrates with the EKS infrastructure, including load balancers, ingress controllers, and backend services.
+
+### Key Architectural Components
+
+**Control Plane (AWS Managed)**
+- EKS master nodes managed by AWS
+- API server, etcd, scheduler, and controller manager
+
+**Data Plane (Customer Managed)**
+- EC2 worker nodes in private subnets
+- Flask application pods and system components
+- Load balancers and ingress controllers
+
+**Application Layer**
+- Flask web application at app.argocd.isaiahmichael.com
+- Multiple endpoints and subdomains (/deployment, /api, /health)
+- Docker containerized microservices
+
+**GitOps Layer**
+- ArgoCD for declarative deployments
+- Git repositories as single source of truth
+- Automated synchronization and rollback capabilities
+
+**Security & Access**
+- IAM roles and service accounts (IRSA)
+- RBAC for fine-grained permissions
+- Network policies and security groups
+
+**Observability Stack**
+- Prometheus for metrics collection from Flask app and infrastructure
+- Grafana for visualization and application monitoring
+- Centralized logging and performance tracking
+
+**Automation & DNS**
+- Cert-Manager for automatic SSL/TLS certificates
+- ExternalDNS for dynamic DNS record management
+- Helm for package management and application deployments
 
 # Why This Setup Adds Real Value in a Production Environment
 
