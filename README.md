@@ -337,7 +337,7 @@ echo
 - ArgoCD: https://argocd.isaiahmichael.com (admin / password-from-above)
 - Certificates will be automatically issued for all ingresses!
 
-5. Install Prometheus and Grafana
+6. Install Prometheus and Grafana
 
 ```bash
 # Create monitoring namespace
@@ -412,20 +412,6 @@ kubectl get pods -n cert-manager
 kubectl get clusterissuer letsencrypt-prod
 ```
 
-**Expected output:**
-- All cert-manager pods should be `Running`
-- ClusterIssuer should show `READY: True`
-
-**Get ArgoCD admin password:**
-```bash
-kubectl -n argo-cd get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d
-echo
-```
-
-**Access your applications:**
-- ArgoCD: https://argocd.isaiahmichael.com (admin / password-from-above)
-- Certificates will be automatically issued for all ingresses!
 
 
 7. Install ExternalDNS
