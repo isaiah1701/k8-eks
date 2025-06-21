@@ -1,65 +1,76 @@
+# ARGOCD HELM VALUES - Configures ArgoCD deployment with HTTPS and monitoring
 configs:
   params:
-    server.insecure: false
+    server.insecure: false  # Force HTTPS for all ArgoCD communications
 
+# SERVER CONFIGURATION - ArgoCD UI and API server settings
 server:
+  # INGRESS SETUP - Exposes ArgoCD to external users
   ingress:
-    enabled: true
-    ingressClassName: nginx
-    hostname: argocd.isaiahmichael.com  # Keep consistent with global domain
+    enabled: true  # Enable ingress for external access
+    ingressClassName: nginx  # Use NGINX ingress controller
+    hostname: argocd.isaiahmichael.com  # ArgoCD domain name
+    
+    # INGRESS ANNOTATIONS - Configure ingress behavior
     annotations:
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      external-dns.alpha.kubernetes.io/hostname: argocd.isaiahmichael.com  # ADD THIS LINE
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # ArgoCD backend uses HTTPS
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Redirect HTTP to HTTPS
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  # Force SSL redirect
+      external-dns.alpha.kubernetes.io/hostname: argocd.isaiahmichael.com  # Auto-create DNS record
+      cert-manager.io/cluster-issuer: letsencrypt-prod  # Auto-generate SSL certificate
+    
+    # TLS CONFIGURATION - HTTPS certificate settings
     tls: 
       - hosts:
-          - argocd.isaiahmichael.com  # FIXED: Match hostname
-        secretName: argocd-tls
+          - argocd.isaiahmichael.com  # Domain for SSL certificate
+        secretName: argocd-tls  # Kubernetes secret to store certificate
   
-  # Enable metrics
+  # PROMETHEUS METRICS - Enable server metrics collection
   metrics:
-    enabled: true
+    enabled: true  # Expose ArgoCD server metrics
     serviceMonitor:
-      enabled: true
+      enabled: true  # Create ServiceMonitor for Prometheus scraping
       additionalLabels:
-        release: monitoring
+        release: monitoring  # Match Prometheus release label
 
-# Enable metrics for all components
+# CONTROLLER METRICS - ArgoCD application controller monitoring
 controller:
   metrics:
-    enabled: true
+    enabled: true  # Enable controller metrics
     serviceMonitor:
-      enabled: true
+      enabled: true  # Create ServiceMonitor for Prometheus
       additionalLabels:
-        release: monitoring
+        release: monitoring  # Match monitoring stack labels
 
+# REPOSITORY SERVER METRICS - Git repository server monitoring
 repoServer:
   metrics:
-    enabled: true
+    enabled: true  # Enable repo server metrics
     serviceMonitor:
-      enabled: true
+      enabled: true  # Create ServiceMonitor for Prometheus
       additionalLabels:
-        release: monitoring
+        release: monitoring  # Match monitoring stack labels
 
+# REDIS METRICS - Redis cache monitoring
 redis:
   metrics:
-    enabled: true
+    enabled: true  # Enable Redis metrics
     serviceMonitor:
-      enabled: true
+      enabled: true  # Create ServiceMonitor for Prometheus
       additionalLabels:
-        release: monitoring
+        release: monitoring  # Match monitoring stack labels
 
+# DEX METRICS - OAuth/OIDC server monitoring
 dex:
   metrics:
-    enabled: true
+    enabled: true  # Enable Dex authentication metrics
     serviceMonitor:
-      enabled: true
+      enabled: true  # Create ServiceMonitor for Prometheus
       additionalLabels:
-        release: monitoring
+        release: monitoring  # Match monitoring stack labels
 
+# GLOBAL SETTINGS - ArgoCD global configuration
 global:
-  domain: argocd.isaiahmichael.com  # FIXED: Match hostname
+  domain: argocd.isaiahmichael.com  # Global domain setting for ArgoCD
 
 

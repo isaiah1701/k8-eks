@@ -1,13 +1,14 @@
+# CERT-MANAGER HELM VALUES - Configures cert-manager for automatic SSL certificates
 ingressShim: 
-  defaultACMEChallengeType: dns01
-  defaultACMEDNS01ChallengeProvider: Route53
+  defaultACMEChallengeType: dns01  # Use DNS challenge for domain validation
+  defaultACMEDNS01ChallengeProvider: Route53  # Use AWS Route53 for DNS challenges
 
+# DNS RESOLVER CONFIGURATION - Custom DNS settings for challenges
+extraArgs:
+  - --dns01-recursive-nameservers="8.8.8.8:53"  # Use Google DNS for reliable resolution
+  - --dns01-recursive-nameservers-only  # Only use specified DNS servers
 
-  extraArgs:
-  - --dns01-recursive-nameservers="8.8.8.8:53"
-  - --dns01-recursive-nameservers-only
-
-
-  serviceAccount: 
-   annotations:
-     eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/cert-manager
+# IAM INTEGRATION - Service account with AWS permissions
+serviceAccount: 
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/cert-manager  # IRSA role for Route53 access

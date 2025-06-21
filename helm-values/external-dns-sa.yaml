@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: external-dns
-  namespace: external-dns
+  name: external-dns  # Service account name
+  namespace: external-dns  # External-DNS namespace
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/external-dns
+    eks.amazonaws.com/role-arn: arn:aws:iam::282378667097:role/external-dns  # Links to AWS IAM role via IRSA

@@ -1,12 +1,4 @@
-# Comment out the nginx_ingress resource since it already exists
-# resource "helm_release" "nginx_ingress" {
-#   name       = "nginx-ingress"
-#   repository = "https://kubernetes.github.io/ingress-nginx"
-#   chart      = "ingress-nginx"
-#   namespace        = "ingress-nginx"
-#   create_namespace = true
-# }
-
+## used to deploy kubernetes services using helm charts
 resource "helm_release" "cert_manager" {
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
@@ -14,8 +6,7 @@ resource "helm_release" "cert_manager" {
   version    = "v1.14.4"
 
   namespace        = "cert-manager"
-  create_namespace = true
-
+  create_namespace = true                      ###deploys cert manager to its own namespace  for automated TLS                                    ## cert man for automated TLS Certificates
   set {
     name  = "installCRDs"
     value = "true"
@@ -28,12 +19,12 @@ resource "helm_release" "cert_manager" {
 
 resource "helm_release" "external_dns" {
   name       = "external-dns"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "https://charts.bitnami.com/bitnami"  ## Deploys external DNS to manage DNS records in cloudflare
   chart      = "external-dns"
   version    = "6.28.3"
 
   namespace        = "external-dns"
-  create_namespace = true
+  create_namespace = true                     ### deploys external DNS to its own namespace for managing DNS records
 
   values = [
     file("helm-values/external-dns.yaml")
@@ -42,10 +33,10 @@ resource "helm_release" "external_dns" {
 
 resource "helm_release" "argocd_deploy" {
   name       = "${var.helm_owner}-argocd"
-  chart      = "${path.module}/helm-charts/argo-cd"
+  chart      = "${path.module}/helm-charts/argo-cd"       ## Deploys ArgoCD for GitOps
   version    = "8.0.16"
 
-  namespace        = "argo-cd"
+  namespace        = "argo-cd"         ## deploys ArgoCD to its own namespace for GitOps
   create_namespace = true
 
   values = [
@@ -55,9 +46,9 @@ resource "helm_release" "argocd_deploy" {
 
 resource "helm_release" "prometheus_stack" {
   name       = "monitoring"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "kube-prometheus-stack"
-  namespace  = "monitoring"
+  repository = "https://prometheus-community.github.io/helm-charts"    ## Deploys Prometheus stack for monitoring
+  chart      = "kube-prometheus-stack"    ## Prometheus stack includes Prometheus, Grafana, and Alertmanager
+  namespace  = "monitoring"  ##all in same namespace for monitoring
   
   create_namespace = true
   

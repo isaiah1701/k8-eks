@@ -1,20 +1,27 @@
+# ARGOCD APPLICATION - Manages Flask app deployment via GitOps
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: apps
-  namespace: argo-cd
+  name: apps  # ArgoCD application name
+  namespace: argo-cd  # ArgoCD namespace
 spec:
-  project: default
+  project: default  # ArgoCD project (default project)
+  
+  # SOURCE CONFIGURATION - Git repository settings
   source:
-    repoURL: https://github.com/isaiah1701/k8-eks.git
-    targetRevision: HEAD
-    path: apps
+    repoURL: https://github.com/isaiah1701/k8-eks.git  # Git repository URL
+    targetRevision: HEAD  # Track latest commit on main branch
+    path: apps  # Monitor /apps directory in repository
+  
+  # DESTINATION - Where to deploy resources
   destination:
-    server: https://kubernetes.default.svc
-    namespace: apps
+    server: https://kubernetes.default.svc  # Local Kubernetes cluster
+    namespace: apps  # Target namespace for deployment
+  
+  # SYNC POLICY - Automated deployment configuration
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
+      prune: true  # Delete resources removed from Git
+      selfHeal: true  # Automatically fix drift from desired state
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=true  # Create namespace if it doesn't exist

@@ -1,26 +1,26 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: the-app-hub-ingress
-  namespace: apps
+  name: the-app-hub-ingress  # Ingress resource name
+  namespace: apps  # Same namespace as application
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: app.argocd.isaiahmichael.com  # ADD
-    cert-manager.io/cluster-issuer: letsencrypt-prod  # FIXED: Use correct issuer
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    external-dns.alpha.kubernetes.io/hostname: app.argocd.isaiahmichael.com  # Auto-creates DNS record
+    cert-manager.io/cluster-issuer: letsencrypt-prod  # Auto-generates SSL certificate
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Force HTTPS redirect
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx  # Use NGINX ingress controller
   tls:
     - hosts:
-        - app.argocd.isaiahmichael.com
-      secretName: the-app-hub-tls
+        - app.argocd.isaiahmichael.com  # Domain for SSL certificate
+      secretName: the-app-hub-tls  # Kubernetes secret to store certificate
   rules:
-    - host: app.argocd.isaiahmichael.com
+    - host: app.argocd.isaiahmichael.com  # Domain name
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /  # Root path
+            pathType: Prefix  # Match all paths starting with /
             backend:
               service:
-                name: the-app-hub
+                name: the-app-hub  # Target service name
                 port:
-                  number: 80
+                  number: 80  # Service port

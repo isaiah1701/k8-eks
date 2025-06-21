@@ -6,3 +6,4 @@ iam_user_arn             = "arn:aws:iam::282378667097:user/isaiah4748"
 iam_user_name            = "isaiah4748"
 cluster_name             = "eks-cluster"
 region                   = "eu-west-2"
+## variables for the EKS cluster and Helm releases

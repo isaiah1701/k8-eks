@@ -1,53 +1,67 @@
+# GRAFANA INGRESS - Exposes Grafana dashboard to internet with HTTPS
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: grafana-ingress
-  namespace: monitoring
+  name: grafana-ingress  # Grafana ingress resource name
+  namespace: monitoring  # Monitoring namespace
+  
+  # ANNOTATIONS - Configure DNS and SSL automation
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: grafana.argocd.isaiahmichael.com
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    external-dns.alpha.kubernetes.io/hostname: grafana.argocd.isaiahmichael.com  # Auto-creates DNS record
+    cert-manager.io/cluster-issuer: letsencrypt-prod  # Auto-generates SSL certificate
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Force HTTPS redirect
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx  # Use NGINX ingress controller
+  
+  # TLS CONFIGURATION - HTTPS certificate for Grafana
   tls:
     - hosts:
-        - grafana.argocd.isaiahmichael.com
-      secretName: grafana-tls
+        - grafana.argocd.isaiahmichael.com  # Grafana domain
+      secretName: grafana-tls  # Certificate storage secret
+  
+  # ROUTING RULES - Traffic routing to Grafana service
   rules:
-    - host: grafana.argocd.isaiahmichael.com
+    - host: grafana.argocd.isaiahmichael.com  # Grafana domain
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /  # Root path
+            pathType: Prefix  # Match all paths
             backend:
               service:
-                name: monitoring-grafana
+                name: monitoring-grafana  # Grafana service name
                 port:
-                  number: 80
+                  number: 80  # Grafana service port
 ---
+# PROMETHEUS INGRESS - Exposes Prometheus UI to internet with HTTPS
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: prometheus-ingress
-  namespace: monitoring
+  name: prometheus-ingress  # Prometheus ingress resource name
+  namespace: monitoring  # Monitoring namespace
+  
+  # ANNOTATIONS - Configure DNS and SSL automation
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: prometheus.argocd.isaiahmichael.com
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    external-dns.alpha.kubernetes.io/hostname: prometheus.argocd.isaiahmichael.com  # Auto-creates DNS record
+    cert-manager.io/cluster-issuer: letsencrypt-prod  # Auto-generates SSL certificate
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"  # Force HTTPS redirect
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx  # Use NGINX ingress controller
+  
+  # TLS CONFIGURATION - HTTPS certificate for Prometheus
   tls:
     - hosts:
-        - prometheus.argocd.isaiahmichael.com
-      secretName: prometheus-tls
+        - prometheus.argocd.isaiahmichael.com  # Prometheus domain
+      secretName: prometheus-tls  # Certificate storage secret
+  
+  # ROUTING RULES - Traffic routing to Prometheus service
   rules:
-    - host: prometheus.argocd.isaiahmichael.com
+    - host: prometheus.argocd.isaiahmichael.com  # Prometheus domain
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /  # Root path
+            pathType: Prefix  # Match all paths
             backend:
               service:
-                name: monitoring-kube-prometheus-prometheus
+                name: monitoring-kube-prometheus-prometheus  # Prometheus service name
                 port:
-                  number: 9090
+                  number: 9090  # Prometheus service port

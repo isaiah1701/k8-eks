@@ -1,35 +1,37 @@
-# Prometheus configuration
+# PROMETHEUS HELM VALUES - Configures monitoring stack with Prometheus and Grafana
 prometheus:
   prometheusSpec:
     # How long to keep metrics
-    retention: 15d
+    retention: 15d  # Keep metrics data for 15 days
     # Explicitly disable storage
-    storageSpec: {}
+    storageSpec: {}  # Use ephemeral storage (no persistent volumes)
     # Monitor all namespaces
-    serviceMonitorNamespaceSelector: {}  # CHANGED: Monitor all namespaces
-    serviceMonitorSelector: {}
-    ruleSelector: {}
+    serviceMonitorNamespaceSelector: {}  # Monitor services in all namespaces
+    serviceMonitorSelector: {}  # Select all ServiceMonitor resources
+    ruleSelector: {}  # Select all PrometheusRule resources for alerting
 
-# Grafana configuration
+# GRAFANA CONFIGURATION - Dashboard and visualization platform
 grafana:
-  enabled: true
-  adminPassword: admin123
-  # Explicitly disable persistence
+  enabled: true  # Enable Grafana deployment
+  adminPassword: admin123  # Default admin password for login
+  
+  # STORAGE CONFIGURATION - Use ephemeral storage
   persistence:
-    enabled: false
-  # Don't create ingress here - we'll use separate file
+    enabled: false  # No persistent storage for dashboards/data
+  
+  # INGRESS CONFIGURATION - Disable built-in ingress
   ingress:
-    enabled: false
+    enabled: false  # Use separate ingress manifest for custom configuration
 
-# Alert Manager - explicitly disable storage
+# ALERTMANAGER CONFIGURATION - Handles alert routing and notifications
 alertmanager:
-  enabled: true
-  alertmanagerSpec: {}
+  enabled: true  # Enable AlertManager for alert handling
+  alertmanagerSpec: {}  # Use default configuration with ephemeral storage
 
-# Node Exporter
+# NODE EXPORTER - Collects hardware and OS metrics from nodes
 nodeExporter:
-  enabled: true
+  enabled: true  # Deploy DaemonSet to collect node-level metrics
 
-# State Metrics
+# KUBE-STATE-METRICS - Exposes Kubernetes object metrics
 kubeStateMetrics:
-  enabled: true
+  enabled: true  # Monitor Kubernetes API objects (pods, deployments, etc.)

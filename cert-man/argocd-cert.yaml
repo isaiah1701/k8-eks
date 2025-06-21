@@ -1,14 +1,19 @@
+# ARGOCD CERTIFICATE - Manually manages SSL certificate for ArgoCD
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: argocd-cert
-  namespace: argo-cd
+  name: argocd-cert  # Certificate resource name
+  namespace: argo-cd  # ArgoCD namespace
 spec:
-  secretName: argocd-server-tls
-  duration: 2160h # 90 days
-  renewBefore: 360h # 15 days
+  secretName: argocd-server-tls  # Kubernetes secret to store certificate
+  duration: 2160h # 90 days - Certificate validity period
+  renewBefore: 360h # 15 days - When to start renewal process
+  
+  # DOMAIN NAMES - Domains covered by this certificate
   dnsNames:
-    - argocd.isaiahmichael.com
+    - argocd.isaiahmichael.com  # ArgoCD domain
+  
+  # CERTIFICATE ISSUER - References ClusterIssuer for certificate generation
   issuerRef:
-    name: issuer
-    kind: ClusterIssuer
+    name: issuer  # ClusterIssuer name (should match letsencrypt-prod)
+    kind: ClusterIssuer  # Cluster-wide certificate issuer

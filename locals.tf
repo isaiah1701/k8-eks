@@ -1,7 +1,6 @@
 locals {
 
-  name   = "eks-cluster"
-  domain = "lab.isaiahmichael.com"
+  name   = "eks-cluster"   ## local variables 
   region = "eu-west-2"
 
 

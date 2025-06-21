@@ -1,25 +1,26 @@
-# Cloudflare external-dns chart configuration
-provider: cloudflare
+# EXTERNAL-DNS HELM VALUES - Automatically manages DNS records in Cloudflare
+provider: cloudflare  # Use Cloudflare as DNS provider
 
-# Use the cloudflare section for API token configuration
+# CLOUDFLARE AUTHENTICATION - API access configuration
 cloudflare:
-  apiToken: "cRJMG9Gu2Am0-nhTIS2xMeigkkwOMhGxo1LYMPQV"
-  email: "imichael1403@gmail.com"
-  proxied: false  # Forces DNS-only (gray cloud)
+  apiToken: "cRJMG9Gu2Am0-nhTIS2xMeigkkwOMhGxo1LYMPQV"  # Cloudflare API token for DNS access
+  email: "imichael1403@gmail.com"  # Cloudflare account email
+  proxied: false  # DNS-only mode (gray cloud) - no Cloudflare proxy
 
+# DOMAIN WHITELIST - Only manage these specific domains
 domainFilters:
-  - isaiahmichael.com
-  - argocd.isaiahmichael.com
-  - app.argocd.isaiahmichael.com
-  - prometheus.argocd.isaiahmichael.com
-  - grafana.argocd.isaiahmichael.com
+  - isaiahmichael.com  # Root domain
+  - argocd.isaiahmichael.com  # ArgoCD subdomain
+  - app.argocd.isaiahmichael.com  # Flask app subdomain
+  - prometheus.argocd.isaiahmichael.com  # Prometheus subdomain
+  - grafana.argocd.isaiahmichael.com  # Grafana subdomain
 
-policy: sync
-txtOwnerId: "eks-cluster"
-logLevel: info
-interval: 1m
+policy: sync  # Sync mode - create and delete DNS records as needed
+txtOwnerId: "eks-cluster"  # Ownership identifier for TXT records
+logLevel: info  # Logging verbosity level
+interval: 1m  # Check for changes every minute
 
-# Cloudflare specific settings
+# KUBERNETES SOURCES - What resources to monitor for DNS records
 sources:
-  - service
-  - ingress
+  - service  # Monitor Kubernetes services
+  - ingress  # Monitor Kubernetes ingresses

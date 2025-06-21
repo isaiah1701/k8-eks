@@ -1,44 +1,50 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: apps
+  name: apps  # Application namespace for workload isolation
 ---
+# DEPLOYMENT - Manages Flask application pods
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-hub
-  namespace: apps
+  name: app-hub  # Deployment name
+  namespace: apps  # Deploy in apps namespace
   labels:
-    app: app-hub
+    app: app-hub  # Label for identification
 spec:
-  replicas: 2
+  replicas: 2  # Run 2 pod instances for high availability
+  
+  # POD SELECTOR - Identifies which pods this deployment manages
   selector:
     matchLabels:
-      app: app-hub
+      app: app-hub  # Must match template labels
+  
+  # POD TEMPLATE - Defines pod configuration
   template:
     metadata:
       labels:
-        app: app-hub
+        app: app-hub  # Pod labels for service discovery
     spec:
       containers:
-      - name: app-hub
-        image: 282378667097.dkr.ecr.eu-west-2.amazonaws.com/flask-eks-docs:latest
-        imagePullPolicy: Always
+      - name: app-hub  # Container name
+        image: 282378667097.dkr.ecr.eu-west-2.amazonaws.com/flask-eks-docs:latest  # ECR image
+        imagePullPolicy: Always  # Always pull latest image version
         ports:
-        - containerPort: 5000  # FIXED: Your Flask app runs on 5000
+        - containerPort: 5000  # Flask app port
 ---
+# SERVICE - Provides stable network endpoint for pods
 apiVersion: v1
 kind: Service
 metadata:
-  name: the-app-hub
-  namespace: apps
+  name: the-app-hub  # Service name for DNS resolution
+  namespace: apps  # Same namespace as deployment
   labels:
-    app: app-hub
+    app: app-hub  # Service label
 spec:
   selector:
-    app: app-hub
+    app: app-hub  # Routes traffic to pods with this label
   ports:
-    - port: 80
-      targetPort: 5000  # FIXED: Match container port
-      name: http
-  type: ClusterIP
+    - port: 80  # Service exposes port 80
+      targetPort: 5000  # Forwards to container port 5000
+      name: http  # Port name for reference
+  type: ClusterIP  # Internal cluster access only

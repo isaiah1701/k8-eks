@@ -1,25 +1,32 @@
+# CLUSTERISSUER - Configures Let's Encrypt certificate authority for automatic SSL
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: issuer
+  name: issuer  # ClusterIssuer name for certificate requests
 spec:
   acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: imichael1403@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory  # Let's Encrypt production server
+    email: imichael1403@gmail.com  # Contact email for certificate notifications
+    
+    # PRIVATE KEY STORAGE - Stores ACME account private key
     privateKeySecretRef:
-      name: issuer
+      name: issuer  # Secret name for Let's Encrypt account key
+    
+    # CHALLENGE SOLVERS - Methods to prove domain ownership
     solvers:
+      # DNS-01 CHALLENGE - For specific domain using Route53
       - selector:
           dnsZones:
-            - "argocd.isaiahmichael.com"
+            - "argocd.isaiahmichael.com"  # Domain for DNS challenge
         dns01:
           route53:
-            region: eu-west-2
-            hostedZoneID: Z1R8UBAEXAMPLE
+            region: eu-west-2  # AWS region for Route53
+            hostedZoneID: Z1R8UBAEXAMPLE  # Route53 hosted zone ID
+      
+      # HTTP-01 CHALLENGE - For all other domains using NGINX
       - http01:
           ingress:
-            class: nginx
+            class: nginx  # Use NGINX ingress for HTTP challenge
 
 
-      
-      
+
