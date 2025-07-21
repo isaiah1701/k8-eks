@@ -453,3 +453,42 @@ kubectl describe <resource-type> <resource-name> -n <namespace>
 # Check cluster events
 kubectl get events --sort-by='.lastTimestamp' -A
 ```
+
+## Incident Response & Postmortem
+
+### Summary
+On **2025-06-13 at 19:00 UTC**, the website became completely unavailable to end users due to a DNS resolution failure caused by misconfiguration of the ExternalDNS service in the EKS cluster. The incident was detected via alerting and resolved after approximately 15 minutes by correcting the Cloudflare API token in the ExternalDNS deployment configuration.
+
+### Impact
+- Website returned HTTP **502 Backend Error** for all endpoints during the incident window.
+- No users were able to access the website during this time.
+- Availability SLOs were violated (specific SLOs not yet defined).
+- No data loss occurred.
+
+### Timeline
+| Time (UTC) | Event |
+|------------|-------|
+| 19:00      | Alert triggered: website unavailable |
+| 19:05      | Investigated: ExternalDNS pod observed running via `kubectl describe pod` |
+| 19:07      | Checked logs of ExternalDNS pod: no errors observed |
+| 19:10      | Determined Cloudflare API key was missing from ExternalDNS manifest |
+| 19:12      | Applied updated `external-dns.yaml` with correct API key |
+| 19:15      | DNS records updated and service restored |
+
+### Root Cause Analysis
+- HTTP 502 errors occurred because backend service endpoints were unreachable via DNS.
+- DNS resolution failed because ExternalDNS was not updating DNS records in Cloudflare.
+- ExternalDNS failed because the required Cloudflare API token was not configured.
+- No automated validation caught the missing token before deployment.
+
+### Mitigation & Recovery
+- Updated `external-dns.yaml` manifest to include the correct Cloudflare API token.
+- Applied manifest to the cluster, triggering ExternalDNS to update records.
+- Monitored endpoints until DNS records propagated and service became reachable.
+
+### Action Items & Lessons Learned
+- Define and document clear availability SLOs for the service.
+- Implement automated checks (e.g., CI pipeline lint or pre-deploy hook) to verify required secrets are present.
+- Store and reference the Cloudflare API token securely as a Kubernetes Secret in manifests.
+- Create a deployment checklist for EKS covering critical configuration items such as DNS credentials.
+
