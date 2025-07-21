@@ -3,8 +3,8 @@ provider: cloudflare  # Use Cloudflare as DNS provider
 
 # CLOUDFLARE AUTHENTICATION - API access configuration
 cloudflare:
-  apiToken: "cRJMG9Gu2Am0-nhTIS2xMeigkkwOMhGxo1LYMPQV"  # Cloudflare API token for DNS access
-  email: "imichael1403@gmail.com"  # Cloudflare account email
+  apiToken: "[confidential]"  # Cloudflare API token for DNS access
+  email: "[enter email]"  # Cloudflare account email
   proxied: false  # DNS-only mode (gray cloud) - no Cloudflare proxy
 
 # DOMAIN WHITELIST - Only manage these specific domains
