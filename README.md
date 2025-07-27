@@ -40,7 +40,7 @@ The goal was to build a secure, scalable, and fully automated environment that r
   Handles HTTPS certificate issuance and renewal automatically 🔐 via Let’s Encrypt, securing public-facing services without manual effort.
 
 - ExternalDNS  
-  Automatically manages DNS records in AWS Route 53 🌍 based on Kubernetes ingress resources — keeping domain routing up to date during deployments.
+  Automatically manages DNS records in AWS  Cloudflare 🌍 based on Kubernetes ingress resources — keeping domain routing up to date during deployments.
 
 - Prometheus and Grafana  
   Delivers observability 📊 with real-time metrics collection and dashboards tracking pod health, resource usage, and system performance.
